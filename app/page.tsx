@@ -1,129 +1,351 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  trackSection,
-  trackFile,
-  getSessionData,
-} from "./lib/session";
+import { useState } from "react";
 
-type Screen = "login" | "archive" | "incident";
+type Stage = "intro" | "employee" | "camera" | "session" | "ending";
 
 export default function Home() {
-  const [screen, setScreen] = useState<Screen>("login");
-  const [notice, setNotice] = useState(false);
-
-  useEffect(() => {
-    if (screen === "archive") {
-      trackSection("archive");
-
-      const session = getSessionData();
-
-      if (session.sectionVisits >= 3) {
-        setNotice(true);
-      }
-    }
-  }, [screen]);
-
-  if (screen === "login") {
-    return <Login onEnter={() => setScreen("archive")} />;
-  }
-
-  if (screen === "incident") {
-    return (
-      <Incident
-        onBack={() => setScreen("archive")}
-      />
-    );
-  }
+  const [stage, setStage] = useState<Stage>("intro");
 
   return (
-    <ArchiveHome
-      notice={notice}
-      onOpenIncident={() => {
-        trackFile("INC-147");
-        setScreen("incident");
-      }}
-    />
-  );
-}
+    <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono">
+      {stage === "intro" && (
+        <Intro onContinue={() => setStage("employee")} />
+      )}
 
+      {stage === "employee" && (
+        <EmployeeRecord
+          onContinue={() => setStage("camera")}
+        />
+      )}
 
-/* ------------------------------------------------ */
-/* LOGIN */
-/* ------------------------------------------------ */
+      {stage === "camera" && (
+        <Camera
+          onContinue={() => setStage("session")}
+        />
+      )}
 
-function Login({ onEnter }: { onEnter: () => void }) {
-  return (
-    <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono flex items-center justify-center p-6">
+      {stage === "session" && (
+        <LastSession
+          onContinue={() => setStage("ending")}
+        />
+      )}
 
-      <div className="w-full max-w-2xl border border-[#222] bg-[#080808]">
-
-        <div className="border-b border-[#222] px-6 py-3 flex justify-between text-[10px] text-gray-600">
-          <span>ARCHIVE SYSTEM</span>
-          <span>TERMINAL 03</span>
-        </div>
-
-        <div className="p-10 md:p-14">
-
-          <div className="text-[10px] text-gray-600 mb-8">
-            INTERNAL INFORMATION ARCHIVE
-          </div>
-
-          <h1 className="text-3xl md:text-5xl tracking-[0.2em]">
-            ARCHIVE SYSTEM
-          </h1>
-
-          <div className="h-px bg-[#222] my-8" />
-
-          <div className="text-xs text-gray-600 space-y-2">
-            <p>ACCESS LEVEL: PUBLIC</p>
-            <p>SYSTEM STATUS: ONLINE</p>
-            <p>
-              DATABASE STATUS:{" "}
-              <span className="text-gray-400">
-                OPERATIONAL
-              </span>
-            </p>
-          </div>
-
-          <button
-            onClick={onEnter}
-            className="mt-12 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
-          >
-            ENTER ARCHIVE
-          </button>
-
-          <p className="mt-10 text-[10px] text-gray-700">
-            Unauthorized access is prohibited.
-          </p>
-
-        </div>
-
-        <div className="border-t border-[#222] px-6 py-3 text-[10px] text-gray-700">
-          ARCHIVE SYSTEM v3.7
-        </div>
-
-      </div>
-
+      {stage === "ending" && <Ending />}
     </main>
   );
 }
 
 
-/* ------------------------------------------------ */
-/* ARCHIVE HOME */
-/* ------------------------------------------------ */
+// intro
 
-function ArchiveHome({
-  notice,
-  onOpenIncident,
+function Intro({
+  onContinue,
 }: {
-  notice: boolean;
-  onOpenIncident: () => void;
+  onContinue: () => void;
 }) {
   return (
-    <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono">
+    <Screen>
+
+      <SystemLabel>
+        ARCHIVE TERMINAL 03
+      </SystemLabel>
+
+      <h1 className="text-3xl md:text-5xl tracking-[0.2em] mt-4">
+        CASE FILE: EMP-147
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="space-y-6 text-sm text-gray-500 leading-7">
+
+        <p>
+          EMP-147 was last seen using this terminal
+          on September 29, 2026.
+        </p>
+
+        <p>
+          The employee was reported missing shortly
+          after their final session.
+        </p>
+
+        <p>
+          Your task is to reconstruct their final
+          session and determine what happened.
+        </p>
+
+      </div>
+
+      <Objective>
+        Find the last recorded activity of EMP-147.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        OPEN EMPLOYEE RECORD
+      </button>
+
+    </Screen>
+  );
+}
+
+
+// employee record
+
+function EmployeeRecord({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen>
+
+      <SystemLabel>
+        CASE FILE / EMP-147
+      </SystemLabel>
+
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        EMPLOYEE RECORD
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="border border-[#222] p-6">
+
+        <Info label="EMPLOYEE ID" value="EMP-147" />
+
+        <Info label="STATUS" value="MISSING" />
+
+        <Info
+          label="LAST SEEN"
+          value="2026-09-29 / 23:17"
+        />
+
+        <Info
+          label="LOCATION"
+          value="ARCHIVE TERMINAL 03"
+        />
+
+        <Info
+          label="LAST RECORDED ACTIVITY"
+          value="SECURITY CAMERA 04"
+        />
+
+      </div>
+
+      <div className="mt-10 text-sm text-gray-500 leading-7">
+
+        <p>
+          No further activity was recorded after
+          the employee accessed Security Camera 04.
+        </p>
+
+        <p className="mt-6">
+          The recording has been preserved.
+        </p>
+
+      </div>
+
+      <Objective>
+        View Security Camera 04.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        VIEW CAMERA 04
+      </button>
+
+    </Screen>
+  );
+}
+
+
+// camera
+
+function Camera({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen wide>
+
+      <SystemLabel>
+        SECURITY NETWORK / CAMERA 04
+      </SystemLabel>
+
+      <h1 className="text-2xl tracking-[0.2em] mt-4">
+        CAMERA 04
+      </h1>
+
+      <div className="mt-8 border border-[#222] bg-black">
+
+        <div className="border-b border-[#222] px-4 py-2 flex justify-between text-[10px] text-gray-600">
+
+          <span>
+            CAM-04 / ARCHIVE ROOM
+          </span>
+
+          <span>
+            23:17:04
+          </span>
+
+        </div>
+
+        <div className="aspect-video flex items-center justify-center relative overflow-hidden">
+
+          <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,#fff_4px)]" />
+
+          <div className="text-[10px] text-gray-700">
+            SECURITY FOOTAGE
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className="mt-8 text-sm text-gray-500 leading-7">
+
+        <p>
+          23:17:04 — EMP-147 enters the archive room.
+        </p>
+
+        <p>
+          23:17:11 — Employee sits at Terminal 03.
+        </p>
+
+        <p>
+          23:17:36 — Employee accesses the archive.
+        </p>
+
+        <p>
+          23:18:02 — Employee opens an unidentified file.
+        </p>
+
+      </div>
+
+      <Objective>
+        Find out what EMP-147 was looking at.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        OPEN LAST SESSION
+      </button>
+
+    </Screen>
+  );
+}
+
+
+// last session
+
+function LastSession({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen>
+
+      <SystemLabel>
+        RECOVERED DATA / EMP-147
+      </SystemLabel>
+
+      <h1 className="text-2xl tracking-[0.2em] mt-4">
+        LAST SESSION
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="border border-[#222] p-6 text-xs">
+
+        <Log time="23:17:36">
+          EMP-147 accessed archive.
+        </Log>
+
+        <Log time="23:18:02">
+          EMP-147 opened SECURITY/CAM-04.
+        </Log>
+
+        <Log time="23:18:47">
+          EMP-147 searched: "WHO IS WATCHING"
+        </Log>
+
+        <Log time="23:19:12">
+          EMP-147 searched: "TERMINAL 03"
+        </Log>
+
+        <Log time="23:19:44">
+          EMP-147 searched: "ME"
+        </Log>
+
+        <Log time="23:20:01">
+          EMP-147 stopped responding.
+        </Log>
+
+      </div>
+
+      <Objective>
+        Find the last thing EMP-147 saw.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        CONTINUE INVESTIGATION
+      </button>
+
+    </Screen>
+  );
+}
+
+
+// ending temp.
+
+function Ending() {
+  return (
+    <Screen>
+
+      <SystemLabel>
+        ARCHIVE SYSTEM
+      </SystemLabel>
+
+      <div className="mt-20 text-center">
+
+        <p className="text-sm text-gray-600">
+          Investigation complete.
+        </p>
+
+        <p className="mt-6 text-xs text-gray-700">
+          ENDING — TEMPORARY
+        </p>
+
+      </div>
+
+    </Screen>
+  );
+}
+
+
+// components
+
+function Screen({
+  children,
+  wide = false,
+}: {
+  children: React.ReactNode;
+  wide?: boolean;
+}) {
+  return (
+    <div className="min-h-screen">
 
       <header className="h-14 border-b border-[#222] px-6 flex items-center justify-between">
 
@@ -137,266 +359,54 @@ function ArchiveHome({
 
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
-
-        <div className="text-[10px] text-gray-700 tracking-widest">
-          PUBLIC ARCHIVE
-        </div>
-
-        <h1 className="text-2xl md:text-3xl tracking-widest mt-3">
-          DATABASE INDEX
-        </h1>
-
-        <p className="text-xs text-gray-600 mt-4">
-          Select a file to continue.
-        </p>
-
-        {/* SYSTEM NOTICE */}
-
-        {notice && (
-          <div className="mt-8 border border-[#3a3a3a] bg-[#0b0b0b] px-5 py-4">
-
-            <div className="text-[10px] text-gray-500 tracking-widest">
-              SYSTEM NOTICE
-            </div>
-
-            <p className="text-xs text-gray-400 mt-2">
-              Unusual session activity detected.
-            </p>
-
-          </div>
-        )}
-
-        {/* MAIN FILE */}
-
-        <div className="mt-10">
-
-          <button
-            onClick={onOpenIncident}
-            className="w-full text-left border border-[#333] bg-[#080808] p-6 hover:border-[#777] hover:bg-[#0c0c0c] transition group"
-          >
-
-            <div className="flex items-center justify-between">
-
-              <div>
-
-                <div className="text-[10px] text-gray-600 tracking-widest">
-                  RECENTLY MODIFIED
-                </div>
-
-                <h2 className="text-lg text-gray-300 mt-3 group-hover:text-white">
-                  INCIDENT REPORT 147
-                </h2>
-
-                <p className="text-xs text-gray-600 mt-2">
-                  Employee disappearance
-                </p>
-
-              </div>
-
-              <div className="text-right">
-
-                <div className="text-[10px] text-gray-700">
-                  2026-09-29
-                </div>
-
-                <div className="text-[10px] text-gray-600 mt-2">
-                  RESTRICTED
-                </div>
-
-              </div>
-
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-[#1c1c1c] text-[10px] text-gray-700">
-              FILE ID: INC-147
-            </div>
-
-          </button>
-
-        </div>
-
-        {/* SECONDARY FILES */}
-
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          <div className="border border-[#1c1c1c] p-5 opacity-50">
-
-            <div className="text-[10px] text-gray-700">
-              SECURITY ARCHIVE
-            </div>
-
-            <div className="text-xs text-gray-600 mt-3">
-              Access restricted.
-            </div>
-
-          </div>
-
-          <div className="border border-[#1c1c1c] p-5 opacity-50">
-
-            <div className="text-[10px] text-gray-700">
-              EMPLOYEE DIRECTORY
-            </div>
-
-            <div className="text-xs text-gray-600 mt-3">
-              Access restricted.
-            </div>
-
-          </div>
-
-        </div>
-
-        <div className="mt-12 text-[10px] text-gray-800">
-          Last database synchronization: 2026-09-29
-        </div>
-
+      <div
+        className={`mx-auto px-6 py-16 ${
+          wide ? "max-w-5xl" : "max-w-3xl"
+        }`}
+      >
+        {children}
       </div>
 
-    </main>
+    </div>
   );
 }
 
 
-/* ------------------------------------------------ */
-/* INCIDENT REPORT */
-/* ------------------------------------------------ */
-
-function Incident({
-  onBack,
+function SystemLabel({
+  children,
 }: {
-  onBack: () => void;
+  children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono">
-
-      <header className="h-14 border-b border-[#222] px-6 flex items-center justify-between">
-
-        <button
-          onClick={onBack}
-          className="text-[10px] text-gray-600 hover:text-gray-300"
-        >
-          ← RETURN TO ARCHIVE
-        </button>
-
-        <span className="text-[10px] text-gray-700">
-          INCIDENT REPORT 147
-        </span>
-
-      </header>
-
-      <article className="max-w-3xl mx-auto px-6 py-16">
-
-        <div className="text-[10px] text-gray-700 tracking-widest">
-          INCIDENT REPORT
-        </div>
-
-        <h1 className="text-3xl tracking-widest mt-3">
-          INC-147
-        </h1>
-
-        <div className="h-px bg-[#222] my-8" />
-
-        <div className="grid grid-cols-2 gap-6 text-xs mb-12">
-
-          <div>
-            <div className="text-[10px] text-gray-700">
-              DATE
-            </div>
-
-            <div className="text-gray-400 mt-2">
-              2026-09-29
-            </div>
-          </div>
-
-          <div>
-            <div className="text-[10px] text-gray-700">
-              STATUS
-            </div>
-
-            <div className="text-gray-400 mt-2">
-              RESTRICTED
-            </div>
-          </div>
-
-        </div>
-
-        <section className="space-y-6 text-sm text-gray-500 leading-7">
-
-          <p>
-            An employee reported unusual activity
-            originating from Archive Terminal 03.
-          </p>
-
-          <p>
-            According to the initial report, the
-            terminal displayed information which had
-            not yet been entered into the archive.
-          </p>
-
-          <p>
-            The employee was instructed to terminate
-            the session and leave the facility.
-          </p>
-
-          <p>
-            The employee did not comply.
-          </p>
-
-        </section>
-
-        <div className="my-12 border border-[#222] p-6">
-
-          <div className="text-[10px] text-gray-700 tracking-widest">
-            ACCESS LOG
-          </div>
-
-          <div className="mt-6 space-y-4 text-xs">
-
-            <LogRow
-              label="LAST ACCESS"
-              value="2026-09-29 / 23:17"
-            />
-
-            <LogRow
-              label="ACCESSOR"
-              value="EMP-148"
-            />
-
-            <LogRow
-              label="TERMINAL"
-              value="03"
-            />
-
-            <LogRow
-              label="SESSION"
-              value="ACTIVE"
-            />
-
-          </div>
-
-        </div>
-
-        <div className="border-l border-[#444] pl-5 text-xs text-gray-600">
-
-          <p>
-            Additional information has been
-            restricted by system administrator.
-          </p>
-
-        </div>
-
-      </article>
-
-    </main>
+    <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+      {children}
+    </div>
   );
 }
 
 
-/* ------------------------------------------------ */
-/* SMALL COMPONENT */
-/* ------------------------------------------------ */
+function Objective({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mt-12 border-l border-[#555] pl-5">
 
-function LogRow({
+      <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+        CURRENT OBJECTIVE
+      </div>
+
+      <div className="text-sm text-gray-400 mt-2">
+        {children}
+      </div>
+
+    </div>
+  );
+}
+
+
+function Info({
   label,
   value,
 }: {
@@ -404,14 +414,37 @@ function LogRow({
   value: string;
 }) {
   return (
-    <div className="flex justify-between border-b border-[#151515] pb-2">
+    <div className="flex flex-col md:flex-row md:justify-between gap-2 border-b border-[#151515] py-4">
 
-      <span className="text-gray-700">
+      <span className="text-[10px] text-gray-700">
         {label}
       </span>
 
-      <span className="text-gray-400">
+      <span className="text-xs text-gray-400">
         {value}
+      </span>
+
+    </div>
+  );
+}
+
+
+function Log({
+  time,
+  children,
+}: {
+  time: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex gap-6 border-b border-[#151515] py-4">
+
+      <span className="text-gray-700 shrink-0">
+        {time}
+      </span>
+
+      <span className="text-gray-400">
+        {children}
       </span>
 
     </div>
