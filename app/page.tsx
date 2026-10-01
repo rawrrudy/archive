@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 
-type Stage = "intro" | "employee" | "camera" | "session" | "ending";
+type Stage = 
+  | "intro"
+  | "employee"
+  | "camera"
+  | "session"
+  | "ending";
 
 export default function Home() {
   const [stage, setStage] = useState<Stage>("intro");
+  const [cameraVisits, setCameraVisits] = useState(0);
 
   return (
     <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono">
@@ -21,13 +27,17 @@ export default function Home() {
 
       {stage === "camera" && (
         <Camera
-          onContinue={() => setStage("session")}
+          visitNumber={cameraVisits}
+          onContinue={() => {
+            setCameraVisits((count) => count + 1);
+            setStage("session")
+          }}
         />
       )}
 
       {stage === "session" && (
         <LastSession
-          onContinue={() => setStage("ending")}
+          onContinue={() => setStage("camera")}
         />
       )}
 
@@ -167,10 +177,14 @@ function EmployeeRecord({
 // camera
 
 function Camera({
+  visitNumber,
   onContinue,
 }: {
+  visitNumber: number;
   onContinue: () => void;
 }) {
+  const altered = visitNumber > 0;
+
   return (
     <Screen wide>
 
@@ -190,46 +204,168 @@ function Camera({
             CAM-04 / ARCHIVE ROOM
           </span>
 
+          {altered && (
+            <span className="text-gray-500">
+              · TERMINAL 03 DETECTED
+            </span>
+          )}
+
           <span>
-            23:17:04
+            {altered ? "23:18:07" : "23:17:04"}
           </span>
 
         </div>
 
         <div className="aspect-video flex items-center justify-center relative overflow-hidden">
 
+          
+
           <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,#fff_4px)]" />
 
-          <div className="text-[10px] text-gray-700">
-            SECURITY FOOTAGE
-          </div>
+          {!altered ? (
+            <div className="text-center">
+
+              <div className="text-[10px] text-gray-700">
+                SECURITY FOOTAGE
+              </div>
+
+              <div className="mt-3 text-[10px] text-gray-800">
+                ARCHIVE ROOM
+              </div>
+
+            </div>
+          ) : (
+            <div className="text-center">
+
+              <div className="text-[10px] text-gray-700">
+                SECURITY FOOTAGE
+              </div>
+
+              <div className="mt-6 text-xs text-gray-500">
+                SIGNAL INTERRUPTED
+              </div>
+
+              <div className="mt-2 text-[10px] text-gray-700">
+                FRAME DATA CORRUPTED
+              </div>
+
+            </div>
+          )}
 
         </div>
 
       </div>
 
-      <div className="mt-8 text-sm text-gray-500 leading-7">
+      {!altered ? (
+        <div className="mt-8 text-sm text-gray-500 leading-7">
 
-        <p>
-          23:17:04 — EMP-147 enters the archive room.
-        </p>
+          <p>
+            23:17:04 — EMP-147 enters the archive room.
+          </p>
 
-        <p>
-          23:17:11 — Employee sits at Terminal 03.
-        </p>
+          <p>
+            23:17:11 — Employee sits at Terminal 03.
+          </p>
 
-        <p>
-          23:17:36 — Employee accesses the archive.
-        </p>
+          <p>
+            23:17:36 — Employee accesses the archive.
+          </p>
 
-        <p>
-          23:18:02 — Employee opens an unidentified file.
-        </p>
+          <p>
+            23:18:02 — Employee opens an unidentified file.
+          </p>
 
-      </div>
+        </div>
+      ) : (
+        <div className="mt-8 border border-[#292929] p-6 text-sm text-gray-500 leading-7">
+
+          <p>
+            23:17:04 — EMP-147 enters the archive room.
+          </p>
+
+          <p>
+            23:17:11 — Employee sits at Terminal 03.
+          </p>
+
+          <p>
+            23:17:36 — Employee accesses the archive.
+          </p>
+
+          <p className="text-gray-400">
+            23:18:02 — Employee looks directly at the camera.
+          </p>
+
+          <p className="text-gray-400">
+            23:18:04 - Employee points behind the camera.
+          </p>
+
+          <p className="text-gray-600">
+            23:18:05 - AUDIO UNAVAILABLE.
+          </p>
+
+          <p className="text-gray-500">
+            23:18:06 - Camera attempts to refocus.
+          </p>
+
+          <p className="text-gray-500">
+            23:18:06 - Terminal 03 visible in frame.
+          </p>
+
+          <p className="text-gray-700">
+            23:18:07 - EMP-147 leaves the room.
+          </p>
+
+        </div>
+      )}
+
+      {altered && (
+        <div className="mt-8 border border-[#333] bg-[#080808] p-6">
+
+          <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+            FRAME ANALYSIS
+          </div>
+
+          <div className="mt-5 space-y-3 text-xs">
+
+            <div className="flex justify-between">
+              <span className="text-gray-700">
+                VISIBLE TERMINAL
+              </span>
+
+              <span className="text-gray-400">
+                TERMINAL 03
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-gray-700">
+                FRAME TIME
+              </span>
+
+              <span className="text-gray-400">
+                23:18:06
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-gray-700">
+                SUBJECT
+              </span>
+
+              <span className="text-gray-400">
+                EMP-147
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
       <Objective>
-        Find out what EMP-147 was looking at.
+        {altered
+          ? "Determine what EMP-147 was pointing at Terminal 03."
+          : "Find out what EMP-147 was looking at."}
       </Objective>
 
       <button
@@ -255,7 +391,7 @@ function LastSession({
     <Screen>
 
       <SystemLabel>
-        RECOVERED DATA / EMP-147
+        TERMINAL 03 / SESSION RECORD
       </SystemLabel>
 
       <h1 className="text-2xl tracking-[0.2em] mt-4">
@@ -271,11 +407,11 @@ function LastSession({
         </Log>
 
         <Log time="23:18:02">
-          EMP-147 opened SECURITY/CAM-04.
-        </Log>
+          EMP-147 opened SECURITY/CAM-04
+        </Log> 
 
         <Log time="23:18:47">
-          EMP-147 searched: "WHO IS WATCHING"
+          EMP-147 searched: "WHO IS WATCHING?"
         </Log>
 
         <Log time="23:19:12">
@@ -292,15 +428,60 @@ function LastSession({
 
       </div>
 
+
+      <div className="mt-8 border border-[#333] bg-[#080808] p-6">
+
+        <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+          SESSION INFORMATION
+        </div>
+
+        <div className="mt-6 space-y-4">
+
+          <Info
+            label="TERMINAL"
+            value="03"
+          />
+
+          <Info
+            label="ACCESSOR"
+            value="EMP-147"
+          />
+
+          <Info
+            label="SESSION START"
+            value="23:17:36"
+          />
+
+          <Info
+            label="SESSION STATUS"
+            value="ACTIVE"
+          />
+
+        </div>
+
+      </div>
+
+      <div className="mt-8 text-xs text-gray-600 leading-6">
+
+        <p>
+          This session is still active.
+        </p>
+
+        <p className="mt-3">
+          No termination event has been recorded.
+        </p>
+
+      </div>
+
       <Objective>
-        Find the last thing EMP-147 saw.
+        Return to Camera 04.
       </Objective>
 
       <button
         onClick={onContinue}
         className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
       >
-        CONTINUE INVESTIGATION
+        RETURN TO CAMERA 04
       </button>
 
     </Screen>
