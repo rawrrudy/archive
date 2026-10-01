@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import HorrorOverlay from "./components/HorrorOverlay"; 
+import { count } from "console";
 
 type Stage = 
   | "intro"
@@ -12,8 +14,14 @@ type Stage =
 export default function Home() {
   const [stage, setStage] = useState<Stage>("intro");
   const [cameraVisits, setCameraVisits] = useState(0);
+  const [warningScare, setWarningScare] = useState(false);
 
   return (
+    <>
+      <HorrorOverlay active={warningScare}>
+        SECONDARY SUBJECT DETECTED
+      </HorrorOverlay>
+
     <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono">
       {stage === "intro" && (
         <Intro onContinue={() => setStage("employee")} />
@@ -28,9 +36,20 @@ export default function Home() {
       {stage === "camera" && (
         <Camera
           visitNumber={cameraVisits}
+          triggerWarning={() => {
+            setWarningScare(false);
+
+            setTimeout(() => {
+              setWarningScare(true);
+
+              setTimeout(() => {
+                setWarningScare(false);
+              }, 900);
+            }, 50);
+          }}
           onContinue={() => {
             setCameraVisits((count) => count + 1);
-            setStage("session")
+            setStage("session");
           }}
         />
       )}
@@ -43,6 +62,7 @@ export default function Home() {
 
       {stage === "ending" && <Ending />}
     </main>
+    </>
   );
 }
 
@@ -179,11 +199,39 @@ function EmployeeRecord({
 function Camera({
   visitNumber,
   onContinue,
+  triggerWarning,
 }: {
   visitNumber: number;
   onContinue: () => void;
+  triggerWarning: () => void;
 }) {
   const altered = visitNumber > 0;
+
+  const [cameraFrame, setCameraFrame] = useState(0);
+
+  useEffect(() => {
+    if (!altered) {
+      setCameraFrame(0);
+      return;
+    }
+
+    const timers = [
+      setTimeout(() => setCameraFrame(1), 1500),
+
+      setTimeout(() => setCameraFrame(2), 3000),
+
+      setTimeout(() => {
+        setCameraFrame(3);
+        triggerWarning();
+      }, 4500),
+
+      setTimeout(() => setCameraFrame(4), 6000),
+    ];
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [altered]);
 
   return (
     <Screen wide>
@@ -241,13 +289,38 @@ function Camera({
                 SECURITY FOOTAGE
               </div>
 
-              <div className="mt-6 text-xs text-gray-500">
-                SIGNAL INTERRUPTED
-              </div>
+              {cameraFrame === 0 && (
+                <div className="mt-6 text-xs text-gray-500">
+                  EMP-147 SEATED
+                 </div>
+              )}
 
-              <div className="mt-2 text-[10px] text-gray-700">
-                FRAME DATA CORRUPTED
-              </div>
+              {cameraFrame === 1 && (
+                <div className="mt-6 text-xs text-gray-500">
+                  EMP-147 LOOKING TOWARD CAMERA
+                </div>
+              )}
+
+              {cameraFrame === 2 && (
+                <div className="mt-6 text-xs text-gray-400">
+                  EMP-147 LOOKING DIRECTLY AT CAMERA
+                </div>
+              )}
+
+              {cameraFrame === 3 && (
+                <div className="mt-6 text-xs text-gray-300">
+                  <div>EMP-147</div>
+                  <div className="mt-2 text-gray-600">
+                    SECOND SUBJECT DETECTED
+                  </div>
+               </div>
+              )}
+
+              {cameraFrame >= 4 && (
+                <div className="mt-6 text-xs text-gray-500">
+                  SIGNAL LOST
+                </div>
+              )}
 
             </div>
           )}
