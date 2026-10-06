@@ -5,6 +5,8 @@ import HorrorOverlay from "./components/HorrorOverlay";
 
 type Stage =
   | "intro"
+  | "apartment"
+  | "computer"
   | "camera"
   | "session"
   | "ending";
@@ -43,6 +45,22 @@ export default function Home() {
         {stage === "intro" && (
           <Intro
             onContinue={() => {
+              setStage("apartment");
+            }}
+          />
+        )}
+
+        {stage === "apartment" && (
+          <Apartment
+            onContinue={() => {
+              setStage("computer")
+            }}
+          />
+        )}
+
+        {stage === "computer" && (
+          <Computer
+            onContinue={() => {
               setStage("camera");
             }}
           />
@@ -78,7 +96,6 @@ export default function Home() {
 }
 
 
-
 function Intro({
   onContinue,
 }: {
@@ -87,45 +104,137 @@ function Intro({
   return (
     <Screen>
       <SystemLabel>
-        ARCHIVE TERMINAL 03
+        MISSING PERSON INVESTIGATION
       </SystemLabel>
 
       <h1 className="text-3xl md:text-5xl tracking-[0.2em] mt-4">
-        CASE FILE: EMP-147
+        CASE FILE: EVAN MERCER
       </h1>
 
       <div className="h-px bg-[#222] my-10" />
 
       <div className="space-y-6 text-sm text-gray-500 leading-7">
         <p>
-          EMP-147 has disappeared.
+          Evan Mercer has been reported missing.
         </p>
 
         <p>
-          Their last recorded activity came from
-          Archive Terminal 03.
+          His apartment was found locked form the inside.
+          No signs of forced entry were discovered.
         </p>
 
         <p>
-          Security Camera 04 recorded their final minutes.
+          His phone, wallet, and keys were found inside
+          the apartment.
+        </p>
+
+        <p>
+          You have been assigned to investigate his disappearance.
         </p>
       </div>
 
       <Objective>
-        View Security Camera 04.
+        Search the apartment for clues.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        ENTER APARTMENT
+      </button>
+    </Screen>
+  );
+}
+
+function Apartment({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen>
+      <SystemLabel>
+        APARTMENT 48 / INVESTIGATION
+      </SystemLabel>
+
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        EVAN&apos;S APARTMENT
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="space-y-6 text-sm text-gray-500 leading-7">
+        <p>
+          The apartment is quiet.
+        </p>
+
+        <p>
+          Nothing appears to be disturbed.
+          Evan&apos;s belongings are still here.
+        </p>
+
+        <p>
+          His computer is still running..?
+        </p>
+      </div>
+
+      <Objective>
+        Check Evan&apos;s computer.
       </Objective>
 
       <button
         onClick={onContinue}
         className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
       >
-        VIEW CAMERA 04
+        CHECK COMPUTER
       </button>
     </Screen>
   );
 }
 
+function Computer({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen>
+      <SystemLabel>
+        EVAN&apos;S COMPUTER
+      </SystemLabel>
 
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        COMPUTER
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="border border-[#222] bg-[#080808] p-6">
+        <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+          RECENT ACTIVITY
+        </div>
+
+        <div className="mt-6 space-y-4 text-sm text-gray-500">
+          <p>&gt; Personal Notes</p>
+          <p>&gt; Browser History</p>
+          <p>&gt; Security Cameras</p>
+        </div>
+      </div>
+
+      <Objective>
+        Review Evan&apos;s personal notes.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        OPEN PERSONAL NOTES
+      </button>
+    </Screen>
+  );
+}
 
 function Camera({
   visitNumber,
