@@ -2,7 +2,28 @@
 
 import { useEffect, useState } from "react";
 import HorrorOverlay from "./components/HorrorOverlay"; 
-import { count } from "console";
+
+function playWarningSound() {
+  const audio = new Audio("/sounds/archive_warning.wav");
+  audio.volume = 0.9;
+  audio.play().catch(() => {});
+}
+
+function triggerScreenShake() {
+  const screen = document.getElementById("archive-screen");
+
+  if (!screen) return;
+
+  screen.classList.remove("archive-shake");
+
+  void screen.offsetWidth;
+
+  screen.classList.add("archive-shake");
+
+  setTimeout(() => {
+    screen.classList.remove("archive-shake")
+  }, 700);
+}
 
 type Stage = 
   | "intro"
@@ -22,7 +43,10 @@ export default function Home() {
         SECONDARY SUBJECT DETECTED
       </HorrorOverlay>
 
-    <main className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono">
+    <main
+      id="archive-screen"
+      className="min-h-screen bg-[#050505] text-[#d6d6d6] font-mono"
+    >
       {stage === "intro" && (
         <Intro onContinue={() => setStage("employee")} />
       )}
@@ -36,8 +60,13 @@ export default function Home() {
       {stage === "camera" && (
         <Camera
           visitNumber={cameraVisits}
+
           triggerWarning={() => {
             setWarningScare(false);
+
+            setTimeout(() => {
+              playWarningSound();
+            })
 
             setTimeout(() => {
               setWarningScare(true);
@@ -231,7 +260,7 @@ function Camera({
     return () => {
       timers.forEach(clearTimeout);
     };
-  }, [altered]);
+  }, [altered, triggerWarning]);
 
   return (
     <Screen wide>

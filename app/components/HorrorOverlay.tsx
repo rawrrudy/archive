@@ -1,12 +1,11 @@
 "use client";
 
-import { time } from "console";
 import React, { useEffect, useState } from "react";
 
 type HorrorOverlayProps = {
   active: boolean;
   duration?: number;
-  children?: React.ReactNode
+  children?: React.ReactNode;
 };
 
 export default function HorrorOverlay({
@@ -34,13 +33,15 @@ export default function HorrorOverlay({
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] pointer-events-none bg-black flex items-center justify-center">
-      
+    <div className="fixed inset-0 z-[9999] pointer-events-none bg-black flex items-center justify-center overflow-hidden">
+
+      {/* Full-screen red warning background */}
       <div className="absolute inset-0 bg-red-950/80 animate-pulse" />
 
-      <div className="relative text-center px-8">
+      {/* Glitching warning content */}
+      <div className="relative z-10 text-center px-8 archive-warning-content">
 
-        <div className="text-red-500 text-3xl md:text-6xl font-bold tracking-[0.25em] animate-pulse">
+        <div className="text-red-500 text-3xl md:text-6xl font-bold tracking-[0.25em]">
           {children}
         </div>
 
