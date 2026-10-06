@@ -148,7 +148,7 @@ function Camera({
 
     const warningTimer = setTimeout(() => {
       triggerWarning();
-    }, 3500);
+    }, 4500);
 
     const signalTimer = setTimeout(() => {
       setSignalLost(true);
@@ -199,11 +199,11 @@ function Camera({
         <div className="aspect-video flex items-center justify-center relative overflow-hidden bg-black">
 
           <video
-            key={altered ? "altered" : "normal"}
+            key={altered ? "altered-camera" : "normal-camera"}
             src={
               altered
                 ? "/videos/camera04_cctv.mp4"
-                : "/videos/camera04_normal_cctv.mp4"
+                : "/videos/camera04_normal.mp4"
             }
             autoPlay
             muted
