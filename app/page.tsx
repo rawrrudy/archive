@@ -295,65 +295,15 @@ function Camera({
 
         <div className="aspect-video flex items-center justify-center relative overflow-hidden">
 
+          <video
+            src="/camera04_cctv.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           
-
-          <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,#fff_4px)]" />
-
-          {!altered ? (
-            <div className="text-center">
-
-              <div className="text-[10px] text-gray-700">
-                SECURITY FOOTAGE
-              </div>
-
-              <div className="mt-3 text-[10px] text-gray-800">
-                ARCHIVE ROOM
-              </div>
-
-            </div>
-          ) : (
-            <div className="text-center">
-
-              <div className="text-[10px] text-gray-700">
-                SECURITY FOOTAGE
-              </div>
-
-              {cameraFrame === 0 && (
-                <div className="mt-6 text-xs text-gray-500">
-                  EMP-147 SEATED
-                 </div>
-              )}
-
-              {cameraFrame === 1 && (
-                <div className="mt-6 text-xs text-gray-500">
-                  EMP-147 LOOKING TOWARD CAMERA
-                </div>
-              )}
-
-              {cameraFrame === 2 && (
-                <div className="mt-6 text-xs text-gray-400">
-                  EMP-147 LOOKING DIRECTLY AT CAMERA
-                </div>
-              )}
-
-              {cameraFrame === 3 && (
-                <div className="mt-6 text-xs text-gray-300">
-                  <div>EMP-147</div>
-                  <div className="mt-2 text-gray-600">
-                    SECOND SUBJECT DETECTED
-                  </div>
-               </div>
-              )}
-
-              {cameraFrame >= 4 && (
-                <div className="mt-6 text-xs text-gray-500">
-                  SIGNAL LOST
-                </div>
-              )}
-
-            </div>
-          )}
-
         </div>
 
       </div>
