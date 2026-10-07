@@ -8,6 +8,7 @@ type Stage =
   | "apartment"
   | "computer"
   | "diary"
+  | "cameras"
   | "camera"
   | "session"
   | "ending";
@@ -207,6 +208,74 @@ function Diary({
 }: {
   onContinue: () => void;
 }) {
+  const [page, setPage] = useState(0);
+
+  const pages = [
+    {
+      number: "07",
+      date: "May 21, 2026",
+      entries: [
+        "I installed the cameras today.",
+        "Nothing happened last night, but I keep getting the feeling that someone is standing outside my door.",
+        "This deep, eerie feeling that I can't explain.",
+        "Probably just exhaustion I guess.",
+      ],
+      signature: "- Evan",
+    },
+    {
+      number: "08",
+      date: "May 22, 2026",
+      entries: [
+        "Checked the camera recordings from last night.",
+        "Nothing unusual at first.",
+        "But around 2:37 AM, I thought I saw someone standing at the end of the hallway.",
+        "I replayed it three times. Nothing.",
+        "Maybe I'm just seeing things.",
+      ],
+      signature: "- Evan",
+    },
+    {
+      number: "09",
+      date: "May 23, 2026",
+      entries: [
+        "It happened again.",
+        "Camera 04.",
+        "There was someone standing in the doorway.",
+        "I looked away from the screen just for a split second.",
+        "When I looked back, it was gone.",
+        "I checked the hallway. There was nobody there.",
+        "I don't know what to do now. I am pretty shaken up by this.",
+      ],
+      signature: "- Evan",
+    },
+    {
+      number: "10",
+      date: "May 24, 2026",
+      entries: [
+        "I've been looking at this the entire day.",
+        "The figure doesn't appear when I'm actually looking at the hallway.",
+        "It only appears in the recordings.",
+        "I found a few posts online describing the same thing.",
+        "Nobody knows what it is.",
+      ],
+      signature: "- Evan",
+    },
+    {
+      number: "11",
+      date: "May 26, 2026",
+      entries: [
+        "I think I understand the pattern now.",
+        "The more I look for it, the more often it appears.",
+        "I don't think the recordings are showing me something that happened.",
+        "I think  they're showing me something that knows I'm watching.",
+        "I'm going to stop looking."
+      ],
+      signature: "- Evan",
+    },
+  ];
+
+  const currentPage = pages[page];
+
   return (
     <Screen>
       <SystemLabel>
@@ -230,7 +299,7 @@ function Diary({
           <div className="absolute left-7 top-0 bottom-0 w-px bg-black/20" />
 
           <div
-            className="absolute inset-0 pointer-events-none opacity-30"
+            className="absolute inset-0 pointer-events-none-opacity-30"
             style={{
               backgroundImage:
                 "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, rgba(60,70,80,0.35) 32px)",
@@ -238,63 +307,88 @@ function Diary({
             }}
           />
 
-          <div className="relative z-10">
+          <div className="relative-z-10">
             <div
-              className="text-3xl mb-10"
+              className="text-3xl mb-10 text-[#29251f]"
               style={{
                 fontFamily: "var(--font-archive)",
               }}
             >
-              May 21, 2026
+              {currentPage.date}
             </div>
 
             <div
-              className="text-2xl leading-[2rem]"
+              className="text-2xl leading-[2rem] text-[#29251f]"
               style={{
                 fontFamily: "var(--font-archive)",
               }}
             >
-              <p>
-                I installed the cameras today.
-              </p>
-
-              <p className="mt-6">
-                Nothing happened last night, but I keep
-                getting the feeling that someone is standing
-                outside my door.
-              </p>
-
-              <p className="mt-6">
-                Probably just exhaustion.
-              </p>
+              {currentPage.entries.map((entry: string, index: number) => (
+                <p
+                  key={index}
+                  className={index === 0 ? "" : "mt-6"}
+                >
+                  {entry}
+                </p>
+              ))}
 
               <p className="mt-12 text-right">
-                - Evan
+                {currentPage.signature}
               </p>
             </div>
+          </div>
 
-            <div
-              className="absolute bottom-2 right-2 text-xl"
-              style={{
-                fontFamily: "var(--font-archive)",
-              }}
-            >
-              Page 07
-            </div>
+          <div 
+            className="absolute bottom-6 right-8 text-base text-[#29251f]"
+            style={{
+              fontFamily: "var(--font-archive)",
+            }}
+          >
+            Page {currentPage.number}
           </div>
         </div>
       </div>
 
+      <div className="mt-8 flex justify-center gap-4">
+        <button
+          onClick={() => setPage((p) => Math.max(0, p - 1))}
+          disabled={page === 0}
+          className="border border-[#444] px-6 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          ← PREVIOUS
+        </button>
+
+        <button
+          onClick={() =>
+            setPage((p) => Math.min(pages.length - 1, p + 1))
+          }
+          disabled={page === pages.length - 1}
+          className="border border-[#444] px-6 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          NEXT →
+        </button>
+      </div>
+
+      <div className="text-center mt-4 text-[10px] text-gray-700 tracking-[0.2em]">
+        PAGE {page + 1} / {pages.length}
+      </div>
+
       <Objective>
-        Read Evan&apos;s personal notes.
+        {page === pages.length - 1
+          ? "Review the security camera footage."
+          : "Read Evan's personal notes."}
       </Objective>
 
-      <button
-        onClick={onContinue}
-        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
-      >
-        CONTINUE
-      </button>
+      {page === pages.length - 1 && (
+        <div className="flex justify-center">
+          <button
+            onClick={onContinue}
+            className="mt-8 border border-[#555] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#999] transition"
+          >
+            OPEN SECURITY CAMERAS
+          </button>
+        </div>
+      )}
     </Screen>
   );
 }
