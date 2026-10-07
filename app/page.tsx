@@ -7,6 +7,7 @@ type Stage =
   | "intro"
   | "apartment"
   | "computer"
+  | "diary"
   | "camera"
   | "session"
   | "ending";
@@ -60,6 +61,14 @@ export default function Home() {
 
         {stage === "computer" && (
           <Computer
+            onContinue={() => {
+              setStage("diary");
+            }}
+          />
+        )}
+
+        {stage === "diary" && (
+          <Diary
             onContinue={() => {
               setStage("camera");
             }}
@@ -188,6 +197,103 @@ function Apartment({
         className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
       >
         CHECK COMPUTER
+      </button>
+    </Screen>
+  );
+}
+
+function Diary({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen>
+      <SystemLabel>
+        EVAN MERCER / PERSONAL NOTES
+      </SystemLabel>
+
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        PERSONAL NOTEBOOK
+      </h1>
+
+      <div className="mt-10 flex justify-center">
+        <div
+          className="relative w-full max-w-2xl min-h-[620px] px-12 py-14"
+          style={{
+            background:
+              "linear-gradient(90deg, #b9aa87 0%, #d8cba9 4%, #d8cba9 96%, #b9aa87 100%)",
+            boxShadow:
+              "0 20px 50px rgba(0,0,0,0.55), inset 0 0 35px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div className="absolute left-7 top-0 bottom-0 w-px bg-black/20" />
+
+          <div
+            className="absolute inset-0 pointer-events-none opacity-30"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, rgba(60,70,80,0.35) 32px)",
+              backgroundPosition: "0 105px",
+            }}
+          />
+
+          <div className="relative z-10">
+            <div
+              className="text-3xl mb-10"
+              style={{
+                fontFamily: "var(--font-archive)",
+              }}
+            >
+              May 21, 2026
+            </div>
+
+            <div
+              className="text-2xl leading-[2rem]"
+              style={{
+                fontFamily: "var(--font-archive)",
+              }}
+            >
+              <p>
+                I installed the cameras today.
+              </p>
+
+              <p className="mt-6">
+                Nothing happened last night, but I keep
+                getting the feeling that someone is standing
+                outside my door.
+              </p>
+
+              <p className="mt-6">
+                Probably just exhaustion.
+              </p>
+
+              <p className="mt-12 text-right">
+                - Evan
+              </p>
+            </div>
+
+            <div
+              className="absolute bottom-2 right-2 text-xl"
+              style={{
+                fontFamily: "var(--font-archive)",
+              }}
+            >
+              Page 07
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Objective>
+        Read Evan&apos;s personal notes.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        CONTINUE
       </button>
     </Screen>
   );
