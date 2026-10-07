@@ -2,12 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 import HorrorOverlay from "./components/HorrorOverlay";
+import { Seymour_One } from "next/font/google";
 
 type Stage =
   | "intro"
   | "apartment"
   | "computer"
   | "diary"
+  | "browser"
+  | "research"
   | "cameras"
   | "camera"
   | "session"
@@ -68,10 +71,22 @@ export default function Home() {
           />
         )}
 
+        {stage === "browser" && (
+          <BrowserHistory
+            onContinue={() => setStage("research")}
+          />
+        )}
+
+        {stage === "research" && (
+          <Research
+            onContinue={() => setStage("cameras")}
+          />
+        )}
+
         {stage === "diary" && (
           <Diary
             onContinue={() => {
-              setStage("cameras");
+              setStage("browser");
             }}
           />
         )}
@@ -383,7 +398,7 @@ function Diary({
 
       <Objective>
         {page === pages.length - 1
-          ? "Review the security camera footage."
+          ? "Review Evan's browser history."
           : "Read Evan's personal notes."}
       </Objective>
 
@@ -393,7 +408,7 @@ function Diary({
             onClick={onContinue}
             className="mt-8 border border-[#555] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#999] transition"
           >
-            OPEN SECURITY CAMERAS
+            OPEN BROWSER HISTORY
           </button>
         </div>
       )}
@@ -424,21 +439,174 @@ function Computer({
         </div>
 
         <div className="mt-6 space-y-4 text-sm text-gray-500">
-          <p>&gt; Personal Notes</p>
-          <p>&gt; Browser History</p>
-          <p>&gt; Security Cameras</p>
+
+          <button
+            onClick={onContinue}
+            className="block w-full text-left hover:text-gray-300 transition"
+          >
+            &gt; Personal Notes
+          </button>
+
+          <p>
+            &gt; Browser History
+          </p>
+
+          <p>
+            &gt; Security Cameras
+          </p>
+
         </div>
       </div>
 
       <Objective>
         Review Evan&apos;s personal notes.
       </Objective>
+    </Screen>
+  );
+}
+
+function BrowserHistory({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  const searches = [
+    "strange figure caught on camera",
+    "person appearing in security footage",
+    "why does it only appear in recordings",
+    "can something see through a camera",
+    "what happens if you find it",
+  ];
+
+  return (
+    <Screen>
+      <SystemLabel>
+        EVAN&apos;S COMPUTER / BROWSER HISTORY
+      </SystemLabel>
+
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        BROWSER HISTORY
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="border border-[#222] bg-[#080808]">
+        <div className="border-b border-[#222] px-5 py-4">
+          <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+            SEARCH HISTORY
+          </div>
+        </div>
+
+        <div className="divide-y divide-[#181818]">
+          {searches.map((search, index) => (
+            <div
+              key={index}
+              className="px-5 py-5"
+            >
+              <div className="text-[10px] text-gray-700 mb-2">
+                SEARCH {String(index + 1).padStart(2, "0")}
+              </div>
+
+              <div className="text-sm text-gray-500">
+                {search}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Objective>
+        Something is wrong. Find out what Evan was researching.
+      </Objective>
 
       <button
         onClick={onContinue}
         className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
       >
-        OPEN PERSONAL NOTES
+        OPEN RESEARCH NOTES
+      </button>
+    </Screen>
+  );
+}
+
+function Research({
+  onContinue,
+}: {
+  onContinue: () => void;
+}) {
+  return (
+    <Screen>
+      <SystemLabel>
+        EVAN MERCER / RESEARCH FILE
+      </SystemLabel>
+
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        RESEARCH NOTES
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="border border-[#222] bg-[#080808] p-8">
+        <div className="text-[10px] text-gray-700 tracking-[0.2em] mb-8">
+          PRIVATE NOTES / UNDATED
+        </div>
+
+        <div className="space-y-8 text-sm text-gray-500 leading-7">
+          <div>
+            <div className="text-gray-600 text-[10px] tracking-[0.2em] mb-2">
+              OBSERVATION 01
+            </div>
+
+            <p>
+              The figure does not appear in the room itself.
+              It only appears in recorded footage.
+            </p>
+          </div>
+
+          <div>
+            <div className="text-gray-600 text-[10px] tracking-[0.2em] mb-2">
+              OBSERVATION 04
+            </div>
+
+            <p>
+              Every time I review the footage, its position
+              changes.
+            </p>
+          </div>
+
+          <div>
+            <div className="text-gray-600 text-[10px] tracking-[0.2em] mb-2">
+              OBSERVATION 07
+            </div>
+
+            <p>
+              It appears more frequently the longer I
+              investigate.
+            </p>
+          </div>
+
+          <div className="border-t border-[#222] pt-8">
+            <div className="text-gray-400 text-[10px] tracking-[0.2em] mb-3">
+              WORKING THEORY
+            </div>
+
+            <p className="text-gray-400">
+              The entity is connected to observation and
+              recording.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <Objective>
+        Review the security camera recordings.
+      </Objective>
+
+      <button
+        onClick={onContinue}
+        className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
+      >
+        OPEN SECURITY CAMERAS
       </button>
     </Screen>
   );
@@ -563,11 +731,8 @@ function Camera({
   triggerWarning: () => void;
 }) {
   const altered = visitNumber > 0;
-  const [signalLost, setSignalLost] = useState(false);
 
   useEffect(() => {
-    setSignalLost(false);
-
     if (!altered) {
       return;
     }
@@ -576,20 +741,15 @@ function Camera({
       triggerWarning();
     }, 4500);
 
-    const signalTimer = setTimeout(() => {
-      setSignalLost(true);
-    }, 5000);
-
     return () => {
       clearTimeout(warningTimer);
-      clearTimeout(signalTimer);
     };
   }, [altered, triggerWarning]);
 
   return (
     <Screen wide>
       <SystemLabel>
-        SECURITY NETWORK / CAMERA 04
+        EVAN MERCER / SECURITY NETWORK
       </SystemLabel>
 
       <h1 className="text-2xl tracking-[0.2em] mt-4">
@@ -597,33 +757,27 @@ function Camera({
       </h1>
 
       <div className="mt-8 border border-[#222] bg-black">
-
-
         <div className="border-b border-[#222] px-4 py-2 flex justify-between text-[10px] text-gray-600">
-
           <span>
-            CAM-04 / ARCHIVE ROOM
+            CAM-04 / APARTMENT HALLWAY
           </span>
 
           {altered ? (
             <span className="text-gray-500">
-              SIGNAL CORRUPTION
+              ARCHIVE ANOMALY
             </span>
           ) : (
             <span>
-              ARCHIVE FEED
+              LIVE ARCHIVE
             </span>
           )}
 
           <span>
-            {altered ? "23:20:07" : "23:17:04"}
+            {altered ? "02:13:47" : "02:13:47"}
           </span>
-
         </div>
 
-
         <div className="aspect-video flex items-center justify-center relative overflow-hidden bg-black">
-
           <video
             key={altered ? "altered-camera" : "normal-camera"}
             src={
@@ -638,22 +792,10 @@ function Camera({
               e.currentTarget.currentTime = 0;
               e.currentTarget.play();
             }}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-              signalLost ? "opacity-0" : "opacity-100"
-            }`}
+            className="absolute inset-0 w-full h-full object-cover"
           />
 
-
-          {signalLost && (
-            <div className="absolute inset-0 bg-black flex items-center justify-center">
-              <div className="text-[10px] text-gray-700 tracking-[0.3em]">
-                SIGNAL LOST
-              </div>
-            </div>
-          )}
-
-          {/* Altered CCTV interference */}
-          {altered && !signalLost && (
+          {altered && (
             <>
               <div className="absolute inset-0 bg-red-950/5 pointer-events-none" />
 
@@ -662,85 +804,68 @@ function Camera({
               <div className="absolute inset-0 pointer-events-none animate-pulse bg-white/5" />
             </>
           )}
-
         </div>
       </div>
-
-
 
       {!altered && (
         <>
           <div className="mt-8 border border-[#222] p-6 text-sm text-gray-500 leading-7">
-
             <p>
-              23:17:04 — EMP-147 enters the archive room.
+              02:13:41 — Evan enters the hallway.
             </p>
 
             <p>
-              23:17:11 — Employee sits at Terminal 03.
+              02:13:44 — Evan stops outside the bedroom.
             </p>
 
             <p>
-              23:17:36 — Employee accesses the archive.
+              02:13:47 — Evan looks toward the camera.
             </p>
 
             <p>
-              23:18:02 — Employee opens an unidentified file.
+              02:13:51 — No additional movement detected.
             </p>
-
           </div>
 
           <Objective>
-            Review EMP-147&apos;s final terminal session.
+            Something in this footage does not match Evan&apos;s notes.
           </Objective>
 
           <button
             onClick={onContinue}
             className="mt-8 border border-[#444] px-8 py-3 text-xs tracking-[0.2em] hover:bg-[#151515] hover:border-[#777] transition"
           >
-            VIEW TERMINAL SESSION
+            REVIEW FINAL RESEARCH
           </button>
         </>
       )}
 
-
-
       {altered && (
         <>
           <div className="mt-8 border border-[#292929] p-6 text-sm text-gray-500 leading-7">
-
             <p>
-              23:17:04 — EMP-147 enters the archive room.
+              02:13:41 — Evan enters the hallway.
             </p>
 
             <p>
-              23:17:11 — Employee sits at Terminal 03.
+              02:13:44 — Evan stops outside the bedroom.
             </p>
 
             <p className="text-gray-400">
-              23:18:02 — EMP-147 looks directly at the camera.
+              02:13:47 — UNIDENTIFIED FIGURE DETECTED.
             </p>
 
             <p className="text-gray-400">
-              23:18:04 — Employee points behind the camera.
+              02:13:48 — SUBJECT NOT PRESENT IN ORIGINAL RECORDING.
             </p>
 
             <p className="text-gray-600">
-              23:18:05 — AUDIO UNAVAILABLE.
+              02:13:51 — RECORDING INTEGRITY COMPROMISED.
             </p>
-
-            <p className="text-gray-500">
-              23:18:06 — Camera attempts to refocus.
-            </p>
-
-            <p className="text-gray-700">
-              23:18:07 — SIGNAL INTERRUPTION.
-            </p>
-
           </div>
 
           <Objective>
-            Determine what EMP-147 saw.
+            The figure was not there before.
           </Objective>
 
           <button
@@ -751,7 +876,6 @@ function Camera({
           </button>
         </>
       )}
-
     </Screen>
   );
 }
