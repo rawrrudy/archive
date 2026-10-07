@@ -71,6 +71,14 @@ export default function Home() {
         {stage === "diary" && (
           <Diary
             onContinue={() => {
+              setStage("cameras");
+            }}
+          />
+        )}
+
+        {stage === "cameras" && (
+          <Cameras
+            onCamera04={() => {
               setStage("camera");
             }}
           />
@@ -434,6 +442,115 @@ function Computer({
       </button>
     </Screen>
   );
+}
+
+function Cameras({
+  onCamera04,
+}: {
+  onCamera04: () => void;
+}) {
+  return (
+    <Screen>
+      <SystemLabel>
+        EVAN MERCER / SECURITY SYSTEM
+      </SystemLabel>
+
+      <h1 className="text-3xl tracking-[0.2em] mt-4">
+        SECURITY CAMERAS
+      </h1>
+
+      <div className="h-px bg-[#222] my-10" />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div className="border border-[#222] bg-[#080808] p-6">
+
+          <div className="flex justify-between">
+            <span className="text-xs tracking-[0.2em]">
+              CAMERA 01
+            </span>
+
+            <span className="text-[10px] text-gray-700">
+              OFFLINE
+            </span>
+          </div>
+
+          <div className="mt-8 aspect-video bg-black flex items-center justify-center">
+            <span className="text-[10px] text-gray-700 tracking-[0.2em]">
+              NO SIGNAL
+            </span>
+          </div>
+        </div>
+
+        <div className="border border-[#222] bg-[#080808] p-6">
+          <div className="flex justify-between">
+            <span className="text-xs tracking-[0.2em]">
+              CAMERA 02
+            </span>
+
+            <span className="text-[10px] text-gray-700">
+              OFFLINE
+            </span>
+          </div>
+
+          <div className="mt-8 aspect-video bg-black flex items-center justify-center">
+            <span className="text-[10px] text-gray-700 tracking-[0.2em]">
+              NO SIGNAL
+            </span>
+          </div>
+        </div>
+
+        <div className="border border-[#222] bg-[#080808] p-6">
+          <div className="flex justify-between">
+            <span className="text-xs tracking-[0.2em]">
+              CAMERA 03
+            </span>
+
+            <span className="text-[10px] text-gray-700">
+              OFFLINE
+            </span>
+          </div>
+
+          <div className="mt-8 aspect-video bg-black flex items-center justify-center">
+            <span className="text-[10px] text-gray-700 tracking-[0.2em]">
+              NO SIGNAL
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={onCamera04}
+          className="text-left border border-[#444] bg-[#080808] p-6 hover:bg-[#101010] hover:border-[#777] transition"
+        >
+          <div className="flex justify-between">
+            <span className="text-xs tracking-[0.2em]">
+              CAMERA 04
+            </span>
+
+            <span className="text-[10px] text-gray-400">
+              AVAILABLE
+            </span>
+          </div>
+
+          <div className="mt-8 aspect-video bg-black flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-[10px] text-gray-600 tracking-[0.2em]">
+                ARCHIVE ROOM
+              </div>
+
+              <div className="mt-3 text-[10px] text-gray-800">
+                CLICK TO VIEW
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <Objective>
+        Review the available security camera recordings.
+      </Objective>
+    </Screen>
+  )
 }
 
 function Camera({
