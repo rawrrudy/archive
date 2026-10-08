@@ -18,7 +18,7 @@ type Stage =
 function playAmbientSound() {
   const audio = new Audio("/sounds/hum.mp3");
   audio.loop = true;
-  audio.volume = 0.52;
+  audio.volume = 0.32;
   audio.play().catch(() => {});
   return audio;
 }
@@ -771,6 +771,19 @@ function Camera({
   triggerWarning: () => void;
 }) {
   const altered = visitNumber > 0;
+  const staticAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    staticAudioRef.current = playStaticSound();
+
+    return () => {
+      if (staticAudioRef.current) {
+        staticAudioRef.current.pause();
+        staticAudioRef.current.currentTime = 0;
+        staticAudioRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!altered) {
@@ -1014,6 +1027,7 @@ function Ending() {
 
     
     const jumpscareTimer = setTimeout(() => {
+      playJumpscareSound();
       setPhase("jumpscare");
     }, 18000);
 
