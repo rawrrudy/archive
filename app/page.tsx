@@ -889,89 +889,62 @@ function LastSession({
   return (
     <Screen>
       <SystemLabel>
-        TERMINAL 03 / SESSION RECORD
+        EVAN MERCER / RESEARCH FILE
       </SystemLabel>
 
       <h1 className="text-2xl tracking-[0.2em] mt-4">
-        LAST SESSION
+        FINAL RESEARCH
       </h1>
 
       <div className="h-px bg-[#222] my-10" />
 
-      <div className="border border-[#222] p-6 text-xs">
-
-        <Log time="23:17:36">
-          EMP-147 accessed archive.
-        </Log>
-
-        <Log time="23:18:02">
-          EMP-147 opened SECURITY/CAM-04.
-        </Log>
-
-        <Log time="23:18:47">
-          EMP-147 searched: &quot;WHO IS WATCHING?&quot;
-        </Log>
-
-        <Log time="23:19:12">
-          EMP-147 searched: &quot;TERMINAL 03&quot;
-        </Log>
-
-        <Log time="23:19:44">
-          EMP-147 searched: &quot;ME&quot;
-        </Log>
-
-        <Log time="23:20:01">
-          EMP-147 stopped responding.
-        </Log>
-
-      </div>
-
-
-      <div className="mt-8 border border-[#333] bg-[#080808] p-6">
-
-        <div className="text-[10px] text-gray-700 tracking-[0.2em]">
-          SESSION STATUS
+      <div className="border border-[#222] bg-[#080808] p-8">
+        <div className="text-[10px] text-gray-700 tracking-[0.2em] mb-8">
+          FINAL DOCUMENT / UNSAVED
         </div>
 
-        <div className="mt-6 space-y-4">
+        <div 
+          className="text-lg leading-9 text-gray-400"
+          style={{
+            fontFamily: "var(--font-archive)",
+          }}
+        >
+          <p>
+            I think I finally understand what it is.
+          </p>
 
-          <Info
-            label="TERMINAL"
-            value="03"
-          />
+          <p className="mt-8">
+            It isn&apos;t appearing in the recordings.
+          </p>
 
-          <Info
-            label="ACCESSOR"
-            value="EMP-147"
-          />
+          <p className="mt-4">
+            The recordings are allowing it to appear.
+          </p>
 
-          <Info
-            label="SESSION START"
-            value="23:17:36"
-          />
+          <p className="mt-8">
+            Every person I&apos;ve found who documented it
+            eventually disappeared.
+          </p>
 
-          <Info
-            label="STATUS"
-            value="ACTIVE"
-          />
+          <p className="mt-8">
+            I don&apos;t think that&apos;s a coincidence.
+          </p>
 
+          <p className="mt-8">
+            If this is correct, then it already knows that I-
+          </p>
         </div>
 
+        <div className="mt-10 boder-t border-[#222] pt-6">
+          <div className="text-[10px] text-gray-700 tracking-[0.2em]">
+            DOCUMENT STATUS
+          </div>
+
+          <div className="mt-3 text-xs text-gray-500">
+            INCOMPLETE
+          </div>
+        </div>
       </div>
-
-
-      <div className="mt-8 text-xs text-gray-600 leading-6">
-
-        <p>
-          This session is still active.
-        </p>
-
-        <p className="mt-3">
-          No termination event has been recorded.
-        </p>
-
-      </div>
-
 
       <Objective>
         Return to Camera 04.
@@ -983,7 +956,6 @@ function LastSession({
       >
         RETURN TO CAMERA 04
       </button>
-
     </Screen>
   );
 }
@@ -995,81 +967,61 @@ function Ending() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setRevealed(true);
-    }, 1800);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <Screen>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
 
-      <SystemLabel>
-        ARCHIVE SYSTEM / TERMINAL 03
-      </SystemLabel>
+        {!revealed ? (
+          <>
+            <div className="text-[10px] text-gray-700 tracking-[0.4em]">
+              INVESTIGATION COMPLETE
+            </div>
 
-      <h1 className="text-2xl tracking-[0.2em] mt-4">
-        CURRENT SESSION
-      </h1>
+            <div className="mt-8 text-xs text-gray-600 tracking-[0.25em]">
+              EVAN MERCER
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="text-[10px] text-gray-700 tracking-[0.35em]">
+              ENTITY IDENTIFIED
+            </div>
 
-      <div className="h-px bg-[#222] my-10" />
+            <div className="mt-10 w-64 h-80 border border-[#222] bg-black flex items-center justify-center">
+              <div className="text-[10px] text-gray-800 tracking-[0.2em]">
+                IMAGE UNAVAILABLE
+              </div>
+            </div>
 
-      <div className="border border-[#222] p-6">
+            <div className="mt-10 max-w-xl text-sm text-gray-500 leading-7">
+              <p>
+                Evan Mercer was not investigating a person.
+              </p>
 
-        <Info
-          label="SESSION"
-          value="ACTIVE"
-        />
+              <p className="mt-6">
+                He was investigating the entity.
+              </p>
 
-        <Info
-          label="TERMINAL"
-          value="03"
-        />
+              <p className="mt-6">
+                He got too close to understanding it.
+              </p>
 
-        <Info
-          label="SESSION OWNER"
-          value="EMP-147"
-        />
+              <p className="mt-6">
+                And then it found him.
+              </p>
+            </div>
 
-        <Info
-          label="SESSION START"
-          value="23:17:36"
-        />
-
-        <div className="mt-6 border-t border-[#222] pt-6">
-
-          <div className="text-[10px] text-gray-700 tracking-[0.2em]">
-            CURRENT USER
-          </div>
-
-          <div
-            className={`mt-3 text-lg tracking-[0.2em] transition-all duration-1000 ${
-              revealed
-                ? "text-red-500"
-                : "text-gray-500"
-            }`}
-          >
-            {revealed ? "YOU" : "EMP-147"}
-          </div>
-
-        </div>
-
+            <div className="mt-16 text-red-600 text-2xl tracking-[0.4em] font-bold">
+              YOU&apos;RE NEXT.
+            </div>
+          </>
+        )}
       </div>
-
-
-      {revealed && (
-        <div className="mt-10 text-center">
-
-          <p className="text-xs text-red-500 tracking-[0.25em]">
-            SESSION HAS NOT ENDED.
-          </p>
-
-          <p className="mt-8 text-[10px] text-gray-700">
-            TERMINAL 03 REMAINS ACTIVE.
-          </p>
-
-        </div>
-      )}
-
     </Screen>
   );
 }
