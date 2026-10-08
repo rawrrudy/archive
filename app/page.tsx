@@ -1214,12 +1214,12 @@ function Ending() {
         </div>
       )}
 
-      {/* ========================= */}
-      {/* FINAL */}
-      {/* ========================= */}
 
       {phase === "final" && (
-        <div className="absolute inset-0 bg-black flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-black flex items-center justify-center cursor-pointer"
+          onClick={() => window.location.reload()}
+        >
           <div className="text-red-700 text-3xl tracking-[0.4em] font-bold">
             YOU&apos;RE NEXT.
           </div>
