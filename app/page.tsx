@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import HorrorOverlay from "./components/HorrorOverlay";
-import { Seymour_One } from "next/font/google";
 
 type Stage =
   | "intro"
@@ -16,6 +15,28 @@ type Stage =
   | "session"
   | "ending";
 
+function playAmbientSound() {
+  const audio = new Audio("/sounds/hum.mp3");
+  audio.loop = true;
+  audio.volume = 0.52;
+  audio.play().catch(() => {});
+  return audio;
+}
+
+function playStaticSound() {
+  const audio = new Audio("/sounds/static.mp3");
+  audio.loop = true;
+  audio.volume = 0.18;
+  audio.play().catch(() => {});
+  return audio;
+}
+
+function playJumpscareSound() {
+  const audio = new Audio("/sounds/jumpscare.mp3");
+  audio.volume = 1;
+  audio.play().catch(() => {});
+}
+
 function playWarningSound() {
   const audio = new Audio("/sounds/archive_warning.wav");
   audio.volume = 0.9;
@@ -26,6 +47,9 @@ export default function Home() {
   const [stage, setStage] = useState<Stage>("intro");
   const [cameraVisits, setCameraVisits] = useState(0);
   const [warningScare, setWarningScare] = useState(false);
+  const [ambientAudio, setAmbientAudio] =
+    useState<HTMLAudioElement | null>(null);
+  const ambientAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const triggerWarning = useCallback(() => {
     setWarningScare(false);
@@ -39,6 +63,22 @@ export default function Home() {
       }, 900);
     }, 50);
   }, []);
+
+  useEffect(() => {
+    if (stage === "intro") {
+      return;
+    }
+
+    if (!ambientAudioRef.current) {
+      ambientAudioRef.current = playAmbientSound();
+    }
+
+    if (stage === "ending" && ambientAudioRef.current) {
+      ambientAudioRef.current.pause();
+      ambientAudioRef.current.currentTime = 0;
+      ambientAudioRef.current = null;
+    }
+  }, [stage]);
 
   return (
     <>
@@ -962,70 +1002,219 @@ function LastSession({
 
 
 function Ending() {
-  const [revealed, setRevealed] = useState(false);
+  const [phase, setPhase] = useState<"credits" | "blackout" | "jumpscare" | "final">(
+    "credits"
+  );
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setRevealed(true);
-    }, 2500);
+    
+    const blackoutTimer = setTimeout(() => {
+      setPhase("blackout");
+    }, 16000);
 
-    return () => clearTimeout(timer);
+    
+    const jumpscareTimer = setTimeout(() => {
+      setPhase("jumpscare");
+    }, 18000);
+
+    
+    const finalTimer = setTimeout(() => {
+      setPhase("final");
+    }, 19500);
+
+    return () => {
+      clearTimeout(blackoutTimer);
+      clearTimeout(jumpscareTimer);
+      clearTimeout(finalTimer);
+    };
   }, []);
 
   return (
-    <Screen>
-      <div className="min-h-[80vh] flex flex-col items-center justify-center text-center">
+    <div className="fixed inset-0 bg-black overflow-hidden z-[9998]">
 
-        {!revealed ? (
-          <>
-            <div className="text-[10px] text-gray-700 tracking-[0.4em]">
-              INVESTIGATION COMPLETE
-            </div>
+      {phase === "credits" && (
+        <>
 
-            <div className="mt-8 text-xs text-gray-600 tracking-[0.25em]">
-              EVAN MERCER
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="text-[10px] text-gray-700 tracking-[0.35em]">
-              ENTITY IDENTIFIED
-            </div>
+          <div className="absolute inset-0">
+            <img
+              src="/images/entity.png"
+              alt=""
+              className="w-full h-full object-cover"
+            />
 
-            <div className="mt-10 w-64 h-80 border border-[#222] bg-black flex items-center justify-center">
-              <div className="text-[10px] text-gray-800 tracking-[0.2em]">
-                IMAGE UNAVAILABLE
+            <div className="absolute inset-0 bg-black/45" />
+
+            <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_25%,rgba(0,0,0,0.9)_100%)]" />
+          </div>
+
+
+          <div className="absolute inset-0 flex justify-center overflow-hidden">
+            <div className="credits-roll text-center w-full max-w-2xl px-8">
+
+              <div className="text-[10px] tracking-[0.5em] text-gray-500">
+                A RECORD OF THE MISSING
               </div>
-            </div>
 
-            <div className="mt-10 max-w-xl text-sm text-gray-500 leading-7">
-              <p>
-                Evan Mercer was not investigating a person.
-              </p>
+              <div className="mt-24 text-5xl tracking-[0.25em] text-gray-200">
+                EVAN MERCER
+              </div>
 
-              <p className="mt-6">
+              <div className="mt-8 text-xs tracking-[0.4em] text-gray-500">
+                CASE FILE 04
+              </div>
+
+              <div className="mt-32 text-xs tracking-[0.35em] text-gray-500">
+                INVESTIGATION
+              </div>
+
+              <div className="mt-8 text-2xl tracking-[0.2em] text-gray-300">
+                MISSING
+              </div>
+
+              <div className="mt-6 text-sm text-gray-500 leading-8">
+                Evan Mercer disappeared without a trace.
+                <br />
+                His apartment showed no signs of forced entry.
+              </div>
+
+              <div className="mt-32 text-xs tracking-[0.35em] text-gray-500">
+                FINDINGS
+              </div>
+
+              <div className="mt-8 text-lg tracking-[0.15em] text-gray-300 leading-10">
+                THE FIGURE
+                <br />
+                EXISTS ONLY IN RECORDINGS.
+              </div>
+
+              <div className="mt-16 text-lg tracking-[0.15em] text-gray-300 leading-10">
+                THE MORE IT IS OBSERVED,
+                <br />
+                THE MORE IT APPEARS.
+              </div>
+
+              <div className="mt-16 text-lg tracking-[0.15em] text-gray-300 leading-10">
+                EVERYONE WHO FOUND IT
+                <br />
+                EVENTUALLY DISAPPEARED.
+              </div>
+
+              <div className="mt-32 text-xs tracking-[0.35em] text-gray-500">
+                FINAL RECORD
+              </div>
+
+              <div className="mt-8 text-lg text-gray-300 leading-9">
+                Evan was not investigating a person.
+                <br />
                 He was investigating the entity.
-              </p>
+              </div>
 
-              <p className="mt-6">
+              <div className="mt-8 text-lg text-gray-300 leading-9">
                 He got too close to understanding it.
-              </p>
-
-              <p className="mt-6">
+                <br />
                 And then it found him.
-              </p>
-            </div>
+              </div>
 
-            <div className="mt-16 text-red-600 text-2xl tracking-[0.4em] font-bold">
-              YOU&apos;RE NEXT.
+              <div className="mt-40 text-5xl font-bold tracking-[0.3em] text-white">
+                YOU&apos;RE NEXT.
+              </div>
+
+              <div className="h-[100vh]" />
             </div>
-          </>
-        )}
-      </div>
-    </Screen>
+          </div>
+
+          <style jsx>{`
+            .credits-roll {
+              padding-top: 100vh;
+              animation: creditsScroll 16s linear forwards;
+            }
+
+            @keyframes creditsScroll {
+              from {
+                transform: translateY(0);
+              }
+
+              to {
+                transform: translateY(-100%);
+              }
+            }
+          `}</style>
+        </>
+      )}
+
+
+      {phase === "blackout" && (
+        <div className="absolute inset-0 bg-black" />
+      )}
+
+
+      {phase === "jumpscare" && (
+        <div className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden">
+          <img
+            src="/images/entity-headshot.png"
+            alt=""
+            className="jumpscare-image w-full h-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-red-950/20 animate-pulse" />
+
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.15)_3px)] pointer-events-none" />
+
+          <style jsx>{`
+            .jumpscare-image {
+              animation: jumpscare 1.5s steps(8) forwards;
+            }
+
+            @keyframes jumpscare {
+              0% {
+                transform: scale(1.8);
+                filter: brightness(2) contrast(2);
+              }
+
+              15% {
+                transform: scale(1);
+                filter: brightness(0.7) contrast(2);
+              }
+
+              30% {
+                transform: scale(2.3) translateX(-2%);
+                filter: brightness(1.8) contrast(3);
+              }
+
+              45% {
+                transform: scale(1.1) translateX(2%);
+                filter: brightness(0.4) contrast(3);
+              }
+
+              60% {
+                transform: scale(2.6);
+                filter: brightness(2.5) contrast(2.5);
+              }
+
+              100% {
+                transform: scale(1.4);
+                filter: brightness(1) contrast(2);
+              }
+            }
+          `}</style>
+        </div>
+      )}
+
+      {/* ========================= */}
+      {/* FINAL */}
+      {/* ========================= */}
+
+      {phase === "final" && (
+        <div className="absolute inset-0 bg-black flex items-center justify-center">
+          <div className="text-red-700 text-3xl tracking-[0.4em] font-bold">
+            YOU&apos;RE NEXT.
+          </div>
+        </div>
+      )}
+
+    </div>
   );
 }
-
 
 function Screen({
   children,
