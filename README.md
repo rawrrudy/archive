@@ -47,7 +47,7 @@ The idea of an entity that cannot be seen directly, but can be observed through 
 </p>
 
 <p align="center">
-  <img src="screenshots/ending.png" width="700">
+  <img src="screenshots/conclusion.png" width="700">
   <br>
   <em>The final record.</em>
 </p>
